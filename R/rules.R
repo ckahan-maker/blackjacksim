@@ -15,6 +15,22 @@ blackjack_rules = function(
   hit_split_aces = FALSE,
   allow_blackjack_after_split = FALSE # after splitting, can you get a blackjack payout
 ) {
+  # Validate numeric inputs
+  if (num_decks < 1) stop("num_decks must be at least 1")
+  if (penetration <= 0 || penetration >= 1) stop("penetration must be between 0 and 1")
+  # Validate string choices
+  valid_surrender <- c("none", "early", "late")
+  surrender <- match.arg(surrender, valid_surrender)
+  valid_double <- c("any", "9,10,11", "10,11")
+  double_on <- match.arg(double_on, valid_double)
+  # Check that choices are compatible
+  if (european_no_hole && dealer_peeks) {
+    stop("Conflict: 'dealer_peeks' cannot be TRUE when 'european_no_hole' is TRUE (there is no card to peek at).")
+  }
+
+  if (european_no_hole && surrender != "none") {
+    stop("Conflict: Surrender is not allowed under European No Hole rules.")
+  }
   rules_obj <- structure(
     list(
       payout = payout,
