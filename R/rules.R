@@ -97,3 +97,62 @@ blackjack_rules = function(
   return(rules_obj)
 }
 
+print.blackjack_rules <- function(x, ...) {
+  cat("=== Blackjack Table Rules ===\n")
+
+  ## Basic game structure ----
+  cat(sprintf("Decks:               %d (shuffle at %.0f%%)\n",
+              x$num_decks, x$penetration * 100))
+  cat(sprintf("Burn cards:          %d\n", x$burn_cards))
+  cat(sprintf("Blackjack pays:      %.1f to 1\n", x$payout))
+
+  ## Dealer behavior ----
+  dealer_soft17 <- if (isTRUE(x$dealer_stands_soft_17)) "Stands" else "Hits"
+  cat(sprintf("Dealer on soft 17:   %s\n", dealer_soft17))
+
+  hole_rule <- if (isTRUE(x$european_no_hole)) {
+    "No hole card (European)"
+  } else if (isTRUE(x$dealer_peeks)) {
+    "Dealer peeks for blackjack"
+  } else {
+    "Hole card, no peek"
+  }
+  cat(sprintf("Hole card rule:      %s\n", hole_rule))
+
+  cat(sprintf("Insurance allowed:   %s\n",
+              if (isTRUE(x$allow_insurance)) "Yes" else "No"))
+
+  ## Surrender ----
+  surrender_desc <- switch(
+    x$surrender,
+    none  = "No surrender",
+    early = "Early surrender",
+    late  = "Late surrender",
+    x$surrender  # fallback
+  )
+  cat(sprintf("Surrender:           %s\n", surrender_desc))
+
+  ## Doubling ----
+  double_on_desc <- switch(
+    x$double_on,
+    any        = "Any two cards",
+    "9,10,11"  = "Totals 9–11 only",
+    "10,11"    = "Totals 10–11 only",
+    x$double_on  # fallback
+  )
+  cat(sprintf("Double allowed on:   %s\n", double_on_desc))
+
+  cat(sprintf("Double after split:  %s\n",
+              if (isTRUE(x$double_after_split)) "Yes" else "No"))
+
+  ## Splitting ----
+  cat(sprintf("Max splits:          %d\n", x$max_splits))
+  cat(sprintf("Hit split aces:      %s\n",
+              if (isTRUE(x$hit_split_aces)) "Yes" else "No"))
+  cat(sprintf("Resplit aces (RSA):  %s\n",
+              if (isTRUE(x$resplit_aces)) "Yes" else "No"))
+  cat(sprintf("BJ after split pay:  %s\n",
+              if (isTRUE(x$allow_blackjack_after_split)) "Yes" else "No"))
+
+  invisible(x)
+}
