@@ -47,6 +47,26 @@ evaluate_hand <- function(hand) {
   ))
 }
 
+#' Determine Whether a Hand Is a Natural Blackjack
+#'
+#' @param hand A data frame representing a player's hand. It must contain at
+#'   least two columns:
+#'   \describe{
+#'     \item{\code{rank}}{A character vector giving card ranks (e.g., "A", "K", "7").}
+#'     \item{\code{value}}{A numeric vector giving card values with Aces counted as 11.}
+#'   }
+#'
+#' @return A logical value: \code{TRUE} if the hand is a natural blackjack,
+#'   \code{FALSE} otherwise.
+#'
+#' @examples
+#' hand <- data.frame(rank = c("A", "K"), value = c(11, 10))
+#' is_blackjack(hand)  # TRUE
+#'
+#' hand2 <- data.frame(rank = c("10", "5", "6"), value = c(10, 5, 6))
+#' is_blackjack(hand2) # FALSE
+#'
+#' @keywords internal
 is_blackjack <- function(hand) {
   num_aces <- sum(hand$rank == "A")
   total_value <- sum(hand$value)
