@@ -1,3 +1,46 @@
+#' Define Blackjack Table Configuration
+#'
+#' Creates a configuration object specifying the rules and mechanics for a Blackjack game simulation.
+#' This includes dealer behavior, payout ratios, deck penetration, and allowed player actions.
+#'
+#' @param payout Numeric. The payout ratio for a natural Blackjack. Common values are 1.5 (3:2) or 1.2 (6:5). Default is \code{1.5}.
+#' @param dealer_stands_soft_17 Logical. If \code{TRUE}, the dealer must stand on a Soft 17 (A-6). If \code{FALSE}, the dealer hits on Soft 17. Default is \code{TRUE}.
+#' @param num_decks Integer. The number of 52-card decks used in the shoe. Default is \code{6}.
+#' @param penetration Numeric. A value between 0 and 1 representing the percentage of the shoe dealt before reshuffling. Default is \code{0.75}.
+#' @param burn_cards Integer. The number of cards discarded from the top of the shoe after a shuffle. Default is \code{1}.
+#' @param allow_insurance Logical. Whether the player is offered Insurance when the dealer shows an Ace. Default is \code{TRUE}.
+#' @param surrender Character. Options are \code{"none"}, \code{"early"}, or \code{"late"}. Defines if/when a player can forfeit their hand for half their bet. Default is \code{"none"}.
+#' @param dealer_peeks Logical. If \code{TRUE}, the dealer checks their hole card for Blackjack before the player acts. Default is \code{TRUE}.
+#' @param european_no_hole Logical. If \code{TRUE}, the game is played with "European No Hole Card" rules (dealer receives no second card until player finishes). Default is \code{FALSE}.
+#' @param double_on Character. Specifies which starting totals allow doubling down. Options: \code{"any"}, \code{"9,10,11"}, or \code{"10,11"}. Default is \code{"any"}.
+#' @param double_after_split Logical. If \code{TRUE}, doubling down is permitted after splitting a pair. Default is \code{TRUE}.
+#' @param max_splits Integer. The maximum number of times a hand can be split. Default is \code{3} (allowing up to 4 hands).
+#' @param resplit_aces Logical. If \code{TRUE}, a player can split Aces again if they draw another Ace. Default is \code{FALSE}.
+#' @param hit_split_aces Logical. If \code{TRUE}, a player can hit after splitting Aces (usually \code{FALSE}, meaning split Aces get only one card). Default is \code{FALSE}.
+#' @param allow_blackjack_after_split Logical. If \code{TRUE}, a 10-value card dealt to a split Ace counts as a natural Blackjack (usually \code{FALSE}, counting as a standard 21). Default is \code{FALSE}.
+#'
+#' @return A list of class \code{"blackjack_rules"} containing the specified game parameters
+#' @export
+#'
+#' @examples
+#' #1. Standard Vegas Strip Rules (Dealer hits Soft 17, Late Surrender allowed)
+#' vegas_rules <- blackjack_rules(
+#'   num_decks = 6,
+#'   dealer_stands_soft_17 = FALSE,
+#'   surrender = "late",
+#'   payout = 1.5
+#' )
+#' # 2. Sleazy Casino Rules (High House Edge)
+#' # Features: 6:5 payout, 8 decks, H17, restricted doubling, bad penetration
+#' sleazy_casino <- blackjack_rules(
+#'   payout = 1.2,                 # 6:5 Payout (Massive house edge increase)
+#'   dealer_stands_soft_17 = FALSE,# Dealer hits Soft 17
+#'   num_decks = 8,                # 8 Decks makes counting harder
+#'   penetration = 0.5,            # 50% cut card (terrible for counting)
+#'   double_on = "10,11",          # Can only double on hard 10 or 11
+#'   double_after_split = FALSE,   # No doubling after splitting
+#'   surrender = "none",           # Forced to play out bad hands
+#' )
 blackjack_rules = function(
   payout = 1.5, # 3:2 payout
   dealer_stands_soft_17 = TRUE, # does dealer stand or hit on soft 17
