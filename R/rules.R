@@ -97,6 +97,33 @@ blackjack_rules = function(
   return(rules_obj)
 }
 
+#' #' Print Blackjack Table Rules
+#'
+#' This method prints a clean, human-readable summary of a
+#' \code{blackjack_rules} object. It organizes the table settings into clear
+#' sections—such as dealer behavior, surrender rules, doubling options, and
+#' splitting logic—so users can quickly see how the game is configured.
+#'
+#' @param x An object of class \code{"blackjack_rules"}.
+#' @param ... Additional arguments passed to or from other methods (currently ignored).
+#'
+#' @returns Invisibly returns the original object \code{x}.
+#' @export
+#'
+#' @examples
+#' # 1. Define specific rules
+#' my_rules <- blackjack_rules(
+#'   num_decks = 6,
+#'   dealer_stands_soft_17 = FALSE,
+#'   surrender = "late",
+#'   payout = 1.5
+#' )
+#'
+#' # 2. Print to console (This triggers the function below)
+#' print(my_rules)
+#'
+#' # OR simply type the object name:
+#' my_rules
 print.blackjack_rules <- function(x, ...) {
   cat("=== Blackjack Table Rules ===\n")
 
@@ -149,7 +176,7 @@ print.blackjack_rules <- function(x, ...) {
   cat(sprintf("Max splits:          %d\n", x$max_splits))
   cat(sprintf("Hit split aces:      %s\n",
               if (isTRUE(x$hit_split_aces)) "Yes" else "No"))
-  cat(sprintf("Resplit aces (RSA):  %s\n",
+  cat(sprintf("Resplit aces:  %s\n",
               if (isTRUE(x$resplit_aces)) "Yes" else "No"))
   cat(sprintf("BJ after split pay:  %s\n",
               if (isTRUE(x$allow_blackjack_after_split)) "Yes" else "No"))
