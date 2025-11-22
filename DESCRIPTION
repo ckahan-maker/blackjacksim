@@ -1,9 +1,20 @@
 Package: blackjacksim
-Title: What the Package Does (One Line, Title Case)
+Title: Play and Evaluate Blackjack Strategies via Monte Carlo
 Version: 0.0.0.9000
 Authors@R: 
     person("Caleb", "Kahan", email = "ckahan@tamu.edu", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: Provides tools to play and simulate casino Blackjack under customizable rule
+    sets. Users can interactively play Blackjack in the R console or evaluate
+    user-defined strategies through fast Monte Carlo simulation. The package
+    supports flexible table configurations, including the number of decks, dealer
+    behavior (such as standing or hitting on soft 17), payout structures,
+    surrender rules, doubling and splitting options, and penetration levels. The
+    simulation engine can run millions of hands to estimate expected value, win
+    rate, push rate, and per-hand variance under arbitrary strategies. Methods are
+    included for computing confidence intervals using both independent-hand and
+    shoe-level clustering approaches. The framework is designed to support
+    strategy experimentation, rule comparison, and exploration of how card
+    composition affects optimal decisions in finite Blackjack shoes.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
