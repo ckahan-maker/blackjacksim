@@ -46,3 +46,12 @@ evaluate_hand <- function(hand) {
     code = code           # Use this for printing ("S17")
   ))
 }
+
+is_blackjack <- function(hand) {
+  num_aces <- sum(hand$rank == "A")
+  total_value <- sum(hand$value)
+
+  # A natural blackjack occurs when the hand has exactly two cards,
+  # one of which is an Ace, and their total value is 21.
+  return(nrow(hand) == 2 && num_aces == 1 && total_value == 21)
+}
