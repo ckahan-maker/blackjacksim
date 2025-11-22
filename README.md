@@ -23,6 +23,18 @@ You can install the development version of blackjacksim from
 devtools::install_github("ckahan-maker/blackjacksim")
 ```
 
+## Remaining Work
+
+For the remainder of the semester, the main tasks include completing the
+core blackjack rule implementations—such as splitting, doubling,
+surrender logic, and dealer behavior—and finalizing the hand evaluation
+and game-flow mechanics. The next steps also involve building the Monte
+Carlo simulation engine, adding support for user-defined strategies, and
+reporting key metrics like expected value and win/push rates. Additional
+work includes implementing confidence interval estimation for these
+metrics to quantify uncertainty in simulation results and developing a
+simple interactive console mode.
+
 ## Example
 
 ``` r
