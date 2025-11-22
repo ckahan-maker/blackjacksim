@@ -7,7 +7,12 @@
 
 <!-- badges: end -->
 
-The goal of blackjacksim is to …
+The goal of **blackjacksim** is to make it easy to play and analyze
+blackjack directly from the R console. Users can experiment with custom
+strategies, modify dealer and table rules, and simulate large numbers of
+hands to estimate performance. This package offers a reproducible
+environment for studying how blackjack outcomes change under different
+playing decisions and game conditions.
 
 ## Installation
 
