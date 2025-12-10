@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 #include <random>
 #include <algorithm>
-#include "card.h"
+#include "blackjack.h"
 using namespace Rcpp;
 
 // Create and shuffle a multi-deck blackjack shoe.
