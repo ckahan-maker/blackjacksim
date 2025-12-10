@@ -2,4 +2,4 @@
 
 S3method(print,blackjack_rules)
 export(blackjack_rules)
-export(create_shoe)
+export(evaluate_hand)
