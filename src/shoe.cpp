@@ -1,14 +1,8 @@
 #include <Rcpp.h>
 #include <random>
 #include <algorithm>
+#include "card.h"
 using namespace Rcpp;
-
-// Define structure of a card: rank, suit, and card's value
-struct Card{
-  std::string rank;
-  std::string suit;
-  int value;
-};
 
 // Create and shuffle a multi-deck blackjack shoe.
 //
