@@ -289,7 +289,7 @@ draw_button <- function(label, shortcut,
                         height = 0.05
 ) {
   label_gp <- gpar(fontsize = 10, fontface = "bold", col = "black")
-  short_gp <- gpar(fontsize = 9, col = "gray40")
+  short_gp <- gpar(fontsize = 9, col = "firebrick")
   shortcut_txt <- paste0(" (", shortcut, ")")
   label_w <- convertWidth(
     grobWidth(textGrob(label, gp = label_gp)),
