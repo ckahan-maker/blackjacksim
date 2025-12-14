@@ -259,4 +259,74 @@ draw_bet_bar <- function(bet, max_bet,
   )
 
 }
+#' Draw an Action Button
+#'
+#' Draws a pill-shaped button with a text label and a keyboard shortcut hint
+#' (e.g., \code{"HIT (h)"}). The button width is computed dynamically based on
+#' the rendered text. A drop shadow is added to give a raised appearance.
+#'
+#' @param label Character. Main button label (e.g., \code{"HIT"}, \code{"STAND"}).
+#' @param shortcut Character. Keyboard shortcut displayed in parentheses
+#'   (e.g., \code{"h"}, \code{"s"}).
+#' @param x Numeric. X-coordinate of the button center (NPC units).
+#' @param y Numeric. Y-coordinate of the button center (NPC units).
+#' @param fill Character. Fill color of the button body. Default is \code{"cornsilk"}.
+#' @param height Numeric. Height of the button (NPC units). Default is \code{0.05}.
+#'
+#' @return Invisibly returns \code{NULL}. The button is drawn as a side effect.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' library(grid)
+#' grid.newpage()
+#'
+#' draw_button("HIT", "h", x = 0.5, y = 0.5)
+#'
+draw_button <- function(label, shortcut,
+                        x, y,
+                        fill = "cornsilk",
+                        height = 0.05
+) {
+  label_gp <- gpar(fontsize = 10, fontface = "bold", col = "black")
+  short_gp <- gpar(fontsize = 9, col = "gray40")
+  shortcut_txt <- paste0(" (", shortcut, ")")
+  label_w <- convertWidth(
+    grobWidth(textGrob(label, gp = label_gp)),
+    "npc", valueOnly = TRUE
+  )
+  shortcut_w <- convertWidth(
+    grobWidth(textGrob(shortcut_txt, gp = short_gp)),
+    "npc", valueOnly = TRUE
+  )
+  pad_lr <- 0.02
+  button_w <- label_w + shortcut_w + 2 * pad_lr
+
+  # Draw drop shadow to give the button a raised appearance
+  grid.roundrect(
+    x = x + 0.009, y = y - 0.009, width = button_w, height = height,
+    r = unit(0.5, "snpc"),
+    gp = gpar(fill = "black", alpha = 0.3, col = NA)
+  )
+  # Draw the button body (pill shape)
+  grid.roundrect(
+    x = x, y = y, width = button_w, height = height,
+    r = unit(0.5, "snpc"),
+    gp = gpar(fill = fill, col = "gray30", lwd = 2)
+  )
+  # Draw the main button text
+  x0 <- x - button_w / 2 + pad_lr
+  grid.text(
+    label, x = x0,
+    y = y, just = c("left", "center"),
+    gp = label_gp
+  )
+  # Draw the shortcut text immediately after the label
+  grid.text(
+    shortcut_txt,
+    x = x0 + label_w, y = y,
+    just = c("left", "center"),
+    gp = short_gp
+  )
+}
 
