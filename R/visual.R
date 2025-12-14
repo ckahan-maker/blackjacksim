@@ -100,6 +100,77 @@ draw_card <- function(rank, suit, x, y,
   )
 }
 
-draw_hand <- function(hand){
-
+#' Draw a Hand of Playing Cards
+#'
+#' Draws multiple playing cards from a data frame in a row and places an optional label above the hand.
+#' Each row of \code{hand} should represent one card, with columns \code{rank}
+#' and \code{suit}. If \code{face_down = TRUE}, only the first card is drawn face-down,
+#' which is convenient for drawing a dealer "hole card" in blackjack.
+#'
+#' @param hand A data frame with one row per card. Must contain columns
+#'   \code{rank} and \code{suit}.
+#' @param x Numeric. X-coordinate of the center of the hand (NPC units).
+#' @param y Numeric. Y-coordinate of the center of the hand (NPC units).
+#' @param width Numeric. Width of each card (NPC units). Default is \code{0.12}.
+#' @param height Numeric. Height of each card (NPC units). Default is \code{0.18}.
+#' @param x_spacing Numeric. Horizontal spacing between consecutive cards (NPC units).
+#'   Default is \code{0.04}.
+#' @param y_spacing Numeric. Vertical spacing between consecutive cards (NPC units).
+#'   Default is \code{0.005}.
+#' @param face_down Logical. If \code{TRUE}, draws only the first card face-down.
+#'   Default is \code{FALSE}.
+#' @param label Character or \code{NULL}. Optional label to draw above the hand
+#'   (e.g., \code{"DEALER"}, \code{"HAND 1"}). Default is \code{NULL}.
+#'
+#' @return Invisibly returns \code{NULL}. The hand is drawn as a side effect.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' library(grid)
+#' grid.newpage()
+#'
+#' hand <- data.frame(
+#'   rank = c("A", "7", "K"),
+#'   suit = c("♠", "♦", "♥"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' # Player hand
+#' draw_hand(hand, x = 0.5, y = 0.5, label = "HAND 1")
+#'
+#' # Dealer hand with first card face-down
+#' draw_hand(hand, x = 0.5, y = 0.75, face_down = TRUE, label = "DEALER")
+#'
+draw_hand <- function(hand, x, y,
+                      width = 0.12, height = 0.18,
+                      x_spacing = 0.04, y_spacing = 0.005,
+                      face_down = FALSE, label = NULL) {
+  # Get number of cards
+  n <- nrow(hand)
+  # Compute starting position so the hand is centered at (x, y)
+  start_x <- x - (n - 1) / 2 * x_spacing
+  start_y <- y - (n - 1) / 2 * y_spacing
+  # Loop over each card in the hand
+  for (i in seq_len(n)) {
+    # Draw the i-th card, offset from the starting position
+    draw_card(rank = hand$rank[i],
+              suit = hand$suit[i],
+              x = start_x + (i - 1) * x_spacing,
+              y = start_y + (i - 1) * y_spacing,
+              width = width,
+              height = height,  # slight vertical offset (fan effect)
+              face_down = face_down && i == 1 # only the first card face-down (dealer)
+    )
+  }
+  # Draw a label above the hand if provided (e.g., "DEALER", "HAND 1")
+  if (!is.null(label)) {
+    grid.text(
+      label,
+      x = x,
+      y = y + 2/3 * height,
+      just = "bottom",
+      gp = gpar(fontface = "bold", fontsize = 12, col = "black")
+    )
+  }
 }
