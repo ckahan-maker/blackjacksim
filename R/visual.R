@@ -474,3 +474,66 @@ draw_game <- function(bankroll, bet, max_bet,
   # Draw the dealer's hand near the top of the table
   draw_hand(dealer_hand, 0.5, 0.8, face_down = face_down, label = "DEALER")
 }
+#' Draw Blackjack Hand Result
+#'
+#' Draws a full-screen overlay that summarizes the outcome of a blackjack hand.
+#' The table is dimmed and a large header message (e.g., \code{"YOU WIN"},
+#' \code{"BLACKJACK!"}) is displayed along with a short subheader describing
+#' the result and payout.
+#'
+#' @param status Character. Outcome of the hand. Must be one of
+#'   \code{"win"}, \code{"lose"}, \code{"dealer_bust"}, \code{"player_bust"},
+#'   \code{"push"}, or \code{"blackjack"}.
+#' @param bet Numeric. The bet amount for the hand
+#'
+#' @return Invisibly returns \code{NULL}. The result overlay is drawn
+#'   as a side effect.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' library(grid)
+#' grid.newpage()
+#'
+#' # Example: player wins a $100 bet
+#' draw_result("win", 100)
+#'
+draw_result <- function(status, bet) {
+  # Lookup table defining colors and messages for each possible result
+  result_df <- data.frame(
+    status = c("win", "lose", "dealer_bust", "player_bust", "push", "blackjack"),
+    color = c("royalblue", "maroon","royalblue", "maroon", "tan", "gold"),
+    header = c("YOU WIN","DEALER WINS","DEALER BUST","PLAYER BUST","PUSH","BLACKJACK!"),
+    subheader = c(
+      paste0("High hand: $", bet),
+      "Dealer has the higher hand",
+      paste0("You win $", bet),
+      "Better luck next time!",
+      "Bet returned",
+      paste0("Paid 3 to 2: $", round(3/2 * bet))
+    )
+  )
+  # Select the row corresponding to the current hand outcome
+  message <- result_df[result_df$status == status, ]
+
+  # Dim screen
+  grid.rect(
+    x = 0.5, y = 0.5,
+    width = 1, height = 1,
+    gp = gpar(fill = "black", alpha = 0.7, col = NA)
+  )
+
+  # Draw the main result header
+  grid.text(
+    message$header,
+    x = 0.5, y = 0.6,
+    gp = gpar(col = message$color, fontsize = 40, fontface = "bold")
+  )
+
+  # Draw the secondary explanatory text below the header
+  grid.text(
+    message$subheader,
+    x = 0.5, y = 0.5,
+    gp = gpar(col = "white", fontsize = 20)
+  )
+}
