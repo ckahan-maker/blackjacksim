@@ -199,7 +199,7 @@ draw_bankroll <- function(bankroll, x = 0.98, y = 0.96) {
     paste("BANKROLL:", paste0("$", bankroll)),
     x = x, y = y,
     just = c("right", "top"),
-    gp = gpar(fontsize = 11, fontface = "bold")
+    gp = gpar(fontsize = 11, fontface = "bold", col = "ivory")
   )
 }
 #' Draw a Bet Bar
@@ -255,7 +255,7 @@ draw_bet_bar <- function(bet, max_bet,
     x = x - width/2,
     y = y + height/2 + 0.02,
     just = c("left", "bottom"),
-    gp = gpar(fontface = "bold", fontsize = 10)
+    gp = gpar(fontface = "bold", fontsize = 10, col = "ivory")
   )
 
 }
