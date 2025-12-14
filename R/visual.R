@@ -174,3 +174,31 @@ draw_hand <- function(hand, x, y,
     )
   }
 }
+#' Draw Bankroll Display
+#'
+#' Draws the player's current bankroll,,
+#' typically shown in the top-right corner of the screen during gameplay.
+#'
+#' @param bankroll Numeric. The player's current total bankroll.
+#' @param x Numeric. X-coordinate of the bankroll text (NPC units).
+#'   Default is \code{0.98}.
+#' @param y Numeric. Y-coordinate of the bankroll text (NPC units).
+#'   Default is \code{0.96}.
+#'
+#' @return Invisibly returns \code{NULL}. The bankroll is drawn as a side effect.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' library(grid)
+#' grid.newpage()
+#' draw_bankroll(4000)
+#'
+draw_bankroll <- function(bankroll, x = 0.98, y = 0.96) {
+  grid.text(
+    paste("BANKROLL:", paste0("$", bankroll)),
+    x = x, y = y,
+    just = c("right", "top"),
+    gp = gpar(fontsize = 11, fontface = "bold")
+  )
+}
