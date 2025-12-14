@@ -259,6 +259,7 @@ draw_bet_bar <- function(bet, max_bet,
   )
 
 }
+
 #' Draw an Action Button
 #'
 #' Draws a pill-shaped button with a text label and a keyboard shortcut hint
@@ -329,4 +330,78 @@ draw_button <- function(label, shortcut,
     gp = short_gp
   )
 }
+#' Draw Blackjack Action Buttons
+#'
+#' Draws a set of blackjack action buttons on the screen, consisting of a
+#' horizontal row of primary actions (e.g., HIT, STAND, DOUBLE, SPLIT) and
+#' an vertical stack of secondary actions (e.g., INSURE, SURRENDER).
+#' Buttons listed in \code{disabled_list}
+#' are blacked out to indicate that the action is currently unavailable.
+#'
+#' @param main_y Numeric. Y-coordinate (NPC units) for the horizontal row of
+#'   primary action buttons. Default is \code{0.2}.
+#' @param vertical_x Numeric. X-coordinate (NPC units) for the vertical column
+#'   of secondary action buttons. Default is \code{0.85}.
+#' @param vertical_y Numeric. Y-coordinate (NPC units) for the top-most
+#'   secondary action button. Default is \code{0.4}.
+#' @param pad_button Numeric. Horizontal spacing (NPC units) between adjacent
+#'   primary action buttons. Default is \code{0.02}.
+#' @param disabled_list Character vector. Names of commands that should be
+#'   drawn in a disabled state. Default disables
+#'   \code{"INSURE"} and \code{"SURRENDER"}.
+#'
+#' @return Invisibly returns \code{NULL}. Buttons are drawn as a side effect.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' library(grid)
+#' grid.newpage()
+#'
+#' # Draw buttons with insurance and surrender disabled
+#' draw_buttons()
+#'
+#' # Enable all actions
+#' draw_buttons(disabled_list = character())
+#'
+draw_buttons <- function(main_y = 0.2, vertical_x = 0.85, vertical_y = 0.4, pad_button = 0.02,
+                         disabled_list = c("INSURE", "SURRENDER")) {
+  # Settings for visualization of buttons
+  buttons <- data.frame(
+    Command = c("HIT", "STAND", "DOUBLE", "SPLIT", "INSURE", "SURRENDER"),
+    Shortcut = c("h", "s", "d", "p", "i", "u"),
+    Color = c("springgreen", "sienna1", "dodgerblue","orange","lightgoldenrod","purple"),
+    stringsAsFactors = FALSE
+  )
 
+  label_gp <- gpar(fontsize = 10, fontface = "bold", col = "black")
+  short_gp <- gpar(fontsize = 9, col = "firebrick")
+  pad_lr <- 0.02
+
+  cur_x <- start_x
+
+  for (i in seq_len(nrow(buttons))) {
+    comm <- buttons$Command[i]
+    sh  <- buttons$Shortcut[i]
+    sh_txt <- paste0(" (", sh, ")")
+
+    # compute actual button width in npc
+    lab_w <- convertWidth(grobWidth(textGrob(comm, gp = label_gp)), "npc", TRUE)
+    sh_w  <- convertWidth(grobWidth(textGrob(sh_txt, gp = short_gp)), "npc", TRUE)
+    button_w <- lab_w + sh_w + 2 * pad_lr
+
+    # find center of buttons
+    xi <- if (i < 5) cur_x + button_w / 2 else vertical_x
+    yi <- if (i < 5) main_y else vertical_y - (i - 5) * 0.07
+
+    # black out disabled buttons
+    is_disabled <- comm %in% disabled_list
+    fill_i <- if (is_disabled) "black" else buttons$Color[i]
+
+    draw_button(comm, sh, x = xi, y = yi, fill = fill_i)
+
+    # move to center of next button position
+    cur_x <- cur_x + button_w + pad_button
+  }
+
+}
