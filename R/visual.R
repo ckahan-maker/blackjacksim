@@ -405,3 +405,72 @@ draw_buttons <- function(main_y = 0.2, vertical_x = 0.85, vertical_y = 0.4, pad_
   }
 
 }
+#' Draw the Blackjack Game Screen
+#'
+#' Draws the complete blackjack game interface, including the table background,
+#' bankroll display, bet bar, action buttons, and the current player and dealer
+#' hands.
+#'
+#' @param bankroll Numeric. The player's current total bankroll.
+#' @param bet Numeric. The current bet amount for the hand.
+#' @param max_bet Numeric. The maximum allowed bet, used to scale the bet bar.
+#' @param player_hand Data frame. The player's hand, with one row per card and
+#'   columns \code{rank} and \code{suit}.
+#' @param dealer_hand Data frame. The dealer's hand, with one row per card and
+#'   columns \code{rank} and \code{suit}.
+#' @param face_down Logical. If \code{TRUE}, the dealer's first card is drawn
+#'   face-down (dealer hole card). Default is \code{TRUE}.
+#' @param hand_number Integer. The player hand number to display in the label
+#'   (useful for split hands). Default is \code{1}.
+#'
+#' @return Invisibly returns \code{NULL}. The game screen is drawn as a side effect.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' library(grid)
+#'
+#' player_hand <- data.frame(
+#'   rank = c("A", "7", "K"),
+#'   suit = c("♥", "♣", "♣"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' dealer_hand <- data.frame(
+#'   rank = c("7", "K"),
+#'   suit = c("♥", "♣"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' draw_game(
+#'   bankroll = 1000,
+#'   bet = 500,
+#'   max_bet = 1000,
+#'   player_hand = player_hand,
+#'   dealer_hand = dealer_hand
+#' )
+#'
+draw_game <- function(bankroll, bet, max_bet,
+                      player_hand, dealer_hand, face_down = TRUE,
+                      hand_number = 1) {
+  # Start a new drawing page
+  grid.newpage()
+
+  # Draw table background
+  grid.rect(
+    x = 0.5, y = 0.5,
+    width = 1, height = 1,
+    gp = gpar(fill = "darkolivegreen4", col = NA)
+  )
+  # Draw bankroll in the upper-right corner
+  draw_bankroll(bankroll)
+  # Draw the bet bar at the bottom of the screen
+  draw_bet_bar(bet = bet, max_bet = max_bet)
+  # Draw action buttons
+  draw_buttons()
+  # Draw the player's hand in the center of the table
+  draw_hand(player_hand, 0.25, 0.5, face_down = FALSE,
+            label = paste0("HAND ", hand_number))
+  # Draw the dealer's hand near the top of the table
+  draw_hand(dealer_hand, 0.5, 0.8, face_down = face_down, label = "DEALER")
+}
