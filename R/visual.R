@@ -202,3 +202,61 @@ draw_bankroll <- function(bankroll, x = 0.98, y = 0.96) {
     gp = gpar(fontsize = 11, fontface = "bold")
   )
 }
+#' Draw a Bet Bar
+#'
+#' Draws a horizontal bet bar at the bottom of the screen,
+#' showing the current bet as a fraction of \code{max_bet}.
+#'
+#' @param bet Numeric. Current bet amount (in dollars).
+#' @param max_bet Numeric. Maximum allowed bet amount (in dollars).
+#' @param x Numeric. X-coordinate of the bar center (NPC units). Default is \code{0.5}.
+#' @param y Numeric. Y-coordinate of the bar center (NPC units). Default is \code{0.05}.
+#' @param width Numeric. Total width of the bar (NPC units). Default is \code{0.6}.
+#' @param height Numeric. Total height of the bar (NPC units). Default is \code{0.03}.
+#'
+#' @return Invisibly returns \code{NULL}. The bet bar is drawn as a side effect.
+#'
+#' @keywords internal
+#'
+#' @examples
+#' library(grid)
+#' grid.newpage()
+#'
+#' # Draw a bet bar for a $500 bet with a $1000 max bet
+#' draw_bet_bar(bet = 500, max_bet = 1000)
+#'
+draw_bet_bar <- function(bet, max_bet,
+                         x = 0.5, y = 0.05,
+                         width = 0.6, height = 0.03,
+                         label = "BET") {
+
+  # Compute the filled fraction of the bar
+  frac <- bet / max_bet
+
+  # Draw the background bar (represents max_bet)
+  grid.rect(
+    x = x, y = y,
+    width = width, height = height,
+    gp = gpar(fill = "snow", col = "black")
+  )
+
+  # Draw the filled portion of the bar (represents current bet)
+  grid.rect(
+    x = x - width / 2 + frac * width / 2, # find center of bet bar
+    y = y,
+    width = width * frac,
+    height = height,
+    gp = gpar(fill = "gold", col = NA)
+  )
+
+  # Draw label above the bar showing the current bet amount
+  grid.text(
+    paste0("BET: $", bet),
+    x = x - width/2,
+    y = y + height/2 + 0.02,
+    just = c("left", "bottom"),
+    gp = gpar(fontface = "bold", fontsize = 10)
+  )
+
+}
+
