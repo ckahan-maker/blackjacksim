@@ -2,6 +2,8 @@
 #define BLACKJACK_H
 
 #include <string>
+#include <vector>
+#include <random>
 
 // Define structure of a card: rank, suit, and card's value
 struct Card {
@@ -29,4 +31,9 @@ struct HandVal {
   std::string code;
 };
 
+// Function Headers
+
+bool is_blackjack_c(const std::vector<Card>& hand);
+HandVal evaluate_hand_c(const std::vector<Card>& hand);
+std::vector<Card> create_shoe_c(int num_decks, std::mt19937_64& rng);
 #endif
