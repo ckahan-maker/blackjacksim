@@ -31,9 +31,6 @@ struct HandVal {
   std::string code;
 };
 
-// Type of surrender allowed by the table rules.
-enum SurrenderType { NONE, EARLY, LATE };
-
 // Rules governing when a player may double down.
 enum class DoubleRule {
   ANY,          // Double on any two cards
@@ -46,7 +43,6 @@ struct BlackjackRules {
   bool dealer_stands_soft_17;   // True if dealer stands on soft 17 (S17), false if hits (H17)
   int num_decks;                // Number of standard 52-card decks in the shoe
   bool allow_insurance;         // Whether insurance is offered when dealer shows an Ace
-  SurrenderType surrender;      // Surrender rule in effect (none, early, or late)
   bool dealer_peeks;            // Whether dealer peeks at hole card for blackjack (American rules)
   DoubleRule double_on;        // Doubling restriction rule (e.g., "any", "9,10,11", "10,11")
   bool double_after_split;      // Whether doubling is allowed after splitting a pair
