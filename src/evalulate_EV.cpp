@@ -90,3 +90,58 @@ double eval_stand_c(std::vector<Card> dealer_hand, int player_total,
 
   return expected_value;
 }
+// Recursively compute the Expected Value (EV) of the Double Down action.
+// Parameters:
+//   dealer_hand  - Dealer's current hand.
+//   player_hand  - Player's current hand before doubling.
+//   card_counts  - Remaining card counts in the shoe.
+//   rules        - Blackjack table rules.
+//
+double eval_double_c(std::vector<Card> dealer_hand, std::vector<Card> player_hand,
+                     std::array<int, 12> card_counts, const BlackjackRules& rules) {
+
+  double expected_value = 0.0;
+  // Total number of cards remaining (used for draw probabilities)
+  double total_cards = 0;
+  for (int i = 2; i <= 11; ++i) total_cards += card_counts[i];
+
+  // Double down: player draws exactly one card, then stands with a doubled bet
+  for (int v = 2; v <= 11; ++v) {
+    if (card_counts[v] > 0) {
+      // Calculate the probability of drawing a card
+      double p_card = static_cast<double>(card_counts[v]) / total_cards;
+
+      Card card;
+      if (v != 11) {
+        card = Card{std::to_string(v), "♠", v};
+      } else {
+        card = Card{"A", "♠", v};
+      }
+      // Add the drawn card to the player's hand
+      player_hand.push_back(card);
+
+      // Evaluate player's final total after the one-card draw
+      HandVal hv = evaluate_hand_c(player_hand);
+      auto next_counts = card_counts;
+      next_counts[v]--;
+
+      if (hv.total > 21) {
+        // Player busts: loses 2 units because the bet was doubled
+        expected_value += p_card * -2.0;
+      }
+      else {
+        // Player stands: dealer plays out; outcome is worth 2 units
+        double stand_ev = eval_stand_c(dealer_hand, hv.total,
+                                        next_counts, rules);
+        expected_value += p_card * (2.0 * stand_ev);
+      }
+      // Undo mutation for the next branch
+      player_hand.pop_back();
+    }
+  }
+
+  return expected_value;
+}
+
+
+
