@@ -143,5 +143,70 @@ double eval_double_c(std::vector<Card> dealer_hand, std::vector<Card> player_han
   return expected_value;
 }
 
+// Recursively compute the Expected Value (EV) of choosing to hit.
+//
+// After drawing one card, the player continues optimally by choosing the
+// higher-EV action (stand vs hit again) until the hand ends.
+//
+// Parameters:
+//   dealer_hand  - Dealer's current hand.
+//   player_hand  - Player's current hand before drawing a card.
+//   card_counts  - Remaining card counts in the shoe.
+//   rules        - Blackjack table rules.
+//
+double eval_hit_c(std::vector<Card> dealer_hand, std::vector<Card> player_hand,
+                  std::array<int, 12> card_counts, const BlackjackRules& rules) {
+
+  double expected_value = 0.0;
+
+  // Total number of cards remaining (used for draw probabilities)
+  double total_cards = 0;
+  for (int i = 2; i <= 11; ++i) total_cards += card_counts[i];
+
+  // Enumerate all possible next-card values
+  for (int v = 2; v <= 11; ++v) {
+    if (card_counts[v] > 0) {
+      // Calculate probability of drawing a card
+      double p_card = static_cast<double>(card_counts[v]) / total_cards;
+
+      Card card;
+      if (v != 11) {
+        card = Card{std::to_string(v), "♠", v};
+      } else {
+        card = Card{"A", "♠", v};
+      }
+      // Add the drawn card to the player's hand
+      player_hand.push_back(card);
+
+      // Evaluate player's total after the card draw
+      HandVal hv = evaluate_hand_c(player_hand);
+      auto next_counts = card_counts;
+      next_counts[v]--;
+
+      if (hv.total > 21) {
+        // Player busts: loses 1 unit
+        expected_value += p_card * -1.0;
+      }
+      else if (hv.total == 21) {
+        // Player must stand on 21
+        expected_value += p_card * eval_stand_c(dealer_hand, 21, next_counts, rules);
+      }
+      else {
+        // Player chooses the better of Standing or Hitting again
+        double ev_stand = eval_stand_c(dealer_hand, hv.total, next_counts, rules);
+        double ev_hit_again = eval_hit_c(dealer_hand, player_hand, next_counts, rules);
+
+        // The player will always pick the move with higher EV
+        expected_value += p_card * std::max(ev_stand, ev_hit_again);
+      }
+
+      // Undo mutation for the next loop iteration
+      player_hand.pop_back();
+    }
+  }
+
+  return expected_value;
+}
+
 
 
