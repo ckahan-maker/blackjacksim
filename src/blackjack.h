@@ -31,9 +31,42 @@ struct HandVal {
   std::string code;
 };
 
+// Type of surrender allowed by the table rules.
+enum SurrenderType { NONE, EARLY, LATE };
+
+// Rules governing when a player may double down.
+enum class DoubleRule {
+  ANY,          // Double on any two cards
+  NINE_TEN_ELEVEN, // Double only on hard 9, 10, or 11
+  TEN_ELEVEN    // Double only on hard 10 or 11
+};
+
+// Blackjack table rules and configuration.
+struct BlackjackRules {
+  bool dealer_stands_soft_17;   // True if dealer stands on soft 17 (S17), false if hits (H17)
+  int num_decks;                // Number of standard 52-card decks in the shoe
+  bool allow_insurance;         // Whether insurance is offered when dealer shows an Ace
+  SurrenderType surrender;      // Surrender rule in effect (none, early, or late)
+  bool dealer_peeks;            // Whether dealer peeks at hole card for blackjack (American rules)
+  DoubleRule double_on;        // Doubling restriction rule (e.g., "any", "9,10,11", "10,11")
+  bool double_after_split;      // Whether doubling is allowed after splitting a pair
+  int max_splits;               // Maximum number of splits allowed in a round
+  bool resplit_aces;            // Whether aces may be resplit if another ace is drawn
+  bool hit_split_aces;          // Whether the player may hit hands formed by split aces
+};
+
+
 // Function Headers
 
 bool is_blackjack_c(const std::vector<Card>& hand);
 HandVal evaluate_hand_c(const std::vector<Card>& hand);
 std::vector<Card> create_shoe_c(int num_decks, std::mt19937_64& rng);
+int dealer_play_c(
+    const std::vector<Card>& shoe,
+    std::vector<Card>& hand,
+    bool dealer_stands_soft_17,
+    std::array<int, 12>& card_counts,
+    int pos
+);
+
 #endif
