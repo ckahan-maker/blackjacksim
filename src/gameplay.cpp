@@ -43,10 +43,10 @@ BlackjackRules parse_rules(List rules) {
 //
 bool can_double_c(const std::vector<Card>& player_hand,
                   const BlackjackRules& rules,
-                  bool is_split_hand) {
+                  bool split_hand) {
 
   if (player_hand.size() != 2) return false;
-  if (is_split_hand && !rules.double_after_split) return false;
+  if (split_hand && !rules.double_after_split) return false;
 
   HandVal hv = evaluate_hand_c(player_hand);
   bool is_hard = !hv.soft;
@@ -61,4 +61,28 @@ bool can_double_c(const std::vector<Card>& player_hand,
     default:
       return false;
   }
+}
+
+// Checks if a player is allowed to take another card (Hit)
+//
+// Parameters:
+//   player_hand - The player's current hand
+//   rules - Blackjack table rules.
+//   split_aces - Indicates if this hand resulted from splitting Aces.
+//
+// Returns:
+//   true  - if hitting is allowed under the current rules
+//   false - otherwise
+//
+bool can_hit_c(const std::vector<Card>& player_hand,
+               const BlackjackRules& rules,
+               bool split_aces) {
+
+  // If the hand came from split Aces and the rule 'hit_split_aces' is false,
+  // the player is stuck with whatever they were dealt.
+  if (split_aces && !rules.hit_split_aces) {
+    return false;
+  }
+
+  return true;
 }
