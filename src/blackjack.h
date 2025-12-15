@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <Rcpp.h>
+
 
 // Define structure of a card: rank, suit, and card's value
 struct Card {
@@ -64,5 +66,7 @@ int dealer_play_c(
     std::array<int, 12>& card_counts,
     int pos
 );
+BlackjackRules parse_rules(Rcpp::List rules);
+std::vector<Card> df_to_cards(Rcpp::DataFrame df);
 
 #endif
