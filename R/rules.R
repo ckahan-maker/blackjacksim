@@ -11,13 +11,11 @@
 #' @param allow_insurance Logical. Whether the player is offered Insurance when the dealer shows an Ace. Default is \code{TRUE}.
 #' @param surrender Character. Options are \code{"none"}, \code{"early"}, or \code{"late"}. Defines if/when a player can forfeit their hand for half their bet. Default is \code{"none"}.
 #' @param dealer_peeks Logical. If \code{TRUE}, the dealer checks their hole card for Blackjack before the player acts. Default is \code{TRUE}.
-#' @param european_no_hole Logical. If \code{TRUE}, the game is played with "European No Hole Card" rules (dealer receives no second card until player finishes). Default is \code{FALSE}.
 #' @param double_on Character. Specifies which starting totals allow doubling down. Options: \code{"any"}, \code{"9,10,11"}, or \code{"10,11"}. Default is \code{"any"}.
 #' @param double_after_split Logical. If \code{TRUE}, doubling down is permitted after splitting a pair. Default is \code{TRUE}.
 #' @param max_splits Integer. The maximum number of times a hand can be split. Default is \code{3} (allowing up to 4 hands).
 #' @param resplit_aces Logical. If \code{TRUE}, a player can split Aces again if they draw another Ace. Default is \code{FALSE}.
 #' @param hit_split_aces Logical. If \code{TRUE}, a player can hit after splitting Aces (usually \code{FALSE}, meaning split Aces get only one card). Default is \code{FALSE}.
-#' @param allow_blackjack_after_split Logical. If \code{TRUE}, a 10-value card dealt to a split Ace counts as a natural Blackjack (usually \code{FALSE}, counting as a standard 21). Default is \code{FALSE}.
 #'
 #' @return A list of class \code{"blackjack_rules"} containing the specified game parameters
 #' @export
@@ -50,13 +48,11 @@ blackjack_rules = function(
   allow_insurance = TRUE, # whether user is allowed to make a sidebet about dealer having blackjack
   surrender = "none", # allowed options: early or late (depends on whether dealer can look at hole card)
   dealer_peeks = TRUE, # is dealer allowed to peak at hole card to check for blackjack
-  european_no_hole = FALSE, # is the game played according to european rules: no hole card
   double_on = "any",
   double_after_split = TRUE,
   max_splits = 3,
   resplit_aces = FALSE,
   hit_split_aces = FALSE,
-  allow_blackjack_after_split = FALSE # after splitting, can you get a blackjack payout
 ) {
   # Validate numeric inputs
   if (num_decks < 1) stop("num_decks must be at least 1")
@@ -66,14 +62,7 @@ blackjack_rules = function(
   surrender <- match.arg(surrender, valid_surrender)
   valid_double <- c("any", "9,10,11", "10,11")
   double_on <- match.arg(double_on, valid_double)
-  # Check that choices are compatible
-  if (european_no_hole && dealer_peeks) {
-    stop("Conflict: 'dealer_peeks' cannot be TRUE when 'european_no_hole' is TRUE (there is no card to peek at).")
-  }
 
-  if (european_no_hole && surrender != "none") {
-    stop("Conflict: Surrender is not allowed under European No Hole rules.")
-  }
   rules_obj <- structure(
     list(
       payout = payout,
@@ -84,13 +73,11 @@ blackjack_rules = function(
       allow_insurance = allow_insurance,
       surrender = surrender,
       dealer_peeks = dealer_peeks,
-      european_no_hole = european_no_hole,
       double_on = double_on,
       double_after_split = double_after_split,
       max_splits = max_splits,
       resplit_aces = resplit_aces,
-      hit_split_aces = hit_split_aces,
-      allow_blackjack_after_split = allow_blackjack_after_split
+      hit_split_aces = hit_split_aces
     ),
     class = "blackjack_rules"
   )
@@ -137,14 +124,11 @@ print.blackjack_rules <- function(x, ...) {
   dealer_soft17 <- if (isTRUE(x$dealer_stands_soft_17)) "Stands" else "Hits"
   cat(sprintf("Dealer on soft 17:   %s\n", dealer_soft17))
 
-  hole_rule <- if (isTRUE(x$european_no_hole)) {
-    "No hole card (European)"
-  } else if (isTRUE(x$dealer_peeks)) {
+  if (isTRUE(x$dealer_peeks)) {
     "Dealer peeks for blackjack"
   } else {
     "Hole card, no peek"
   }
-  cat(sprintf("Hole card rule:      %s\n", hole_rule))
 
   cat(sprintf("Insurance allowed:   %s\n",
               if (isTRUE(x$allow_insurance)) "Yes" else "No"))
@@ -178,8 +162,6 @@ print.blackjack_rules <- function(x, ...) {
               if (isTRUE(x$hit_split_aces)) "Yes" else "No"))
   cat(sprintf("Resplit aces:  %s\n",
               if (isTRUE(x$resplit_aces)) "Yes" else "No"))
-  cat(sprintf("BJ after split pay:  %s\n",
-              if (isTRUE(x$allow_blackjack_after_split)) "Yes" else "No"))
 
   invisible(x)
 }
