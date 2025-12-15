@@ -29,3 +29,36 @@ BlackjackRules parse_rules(List rules) {
 
   return rules_c;
 }
+
+// Determine whether the player may double down.
+//
+// Parameters:
+//   player_hand - The player's current hand (must contain exactly two cards).
+//   rules - Blackjack table rules.
+//   split_hand - Indicates whether this hand resulted from a split.
+//
+// Returns:
+//   true  - if doubling is allowed under the current rules
+//   false - otherwise
+//
+bool can_double_c(const std::vector<Card>& player_hand,
+                  const BlackjackRules& rules,
+                  bool is_split_hand) {
+
+  if (player_hand.size() != 2) return false;
+  if (is_split_hand && !rules.double_after_split) return false;
+
+  HandVal hv = evaluate_hand_c(player_hand);
+  bool is_hard = !hv.soft;
+
+  switch (rules.double_on) {
+    case DoubleRule::ANY:
+      return true;
+    case DoubleRule::NINE_TEN_ELEVEN:
+      return is_hard && (hv.total >= 9 && hv.total <= 11);
+    case DoubleRule::TEN_ELEVEN:
+      return is_hard && (hv.total == 10 || hv.total == 11);
+    default:
+      return false;
+  }
+}
