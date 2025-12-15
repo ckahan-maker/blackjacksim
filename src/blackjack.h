@@ -68,5 +68,6 @@ int dealer_play_c(
 );
 BlackjackRules parse_rules(Rcpp::List rules);
 std::vector<Card> df_to_cards(Rcpp::DataFrame df);
+Card create_card_helper(int v);
 
 #endif

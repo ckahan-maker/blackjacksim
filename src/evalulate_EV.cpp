@@ -73,11 +73,8 @@ double eval_stand_c(std::vector<Card> dealer_hand, int player_total,
 
 
       Card card;
-      if (v != 11) {
-        card = Card{std::to_string(v), "♠", v};
-      } else {
-        card = Card{"A", "♠", v};
-      }
+      card = create_card_helper(v);
+
       // Add card to dealer's hand
       dealer_hand.push_back(card);
       // Recursively compute EV for this draw and weight it by its probability.
@@ -111,11 +108,8 @@ double eval_double_c(std::vector<Card> dealer_hand, std::vector<Card> player_han
       double p_card = static_cast<double>(card_counts[v]) / total_cards;
 
       Card card;
-      if (v != 11) {
-        card = Card{std::to_string(v), "♠", v};
-      } else {
-        card = Card{"A", "♠", v};
-      }
+      card = create_card_helper(v);
+
       // Add the drawn card to the player's hand
       player_hand.push_back(card);
 
@@ -169,11 +163,8 @@ double eval_hit_c(std::vector<Card> dealer_hand, std::vector<Card> player_hand,
       double p_card = static_cast<double>(card_counts[v]) / total_cards;
 
       Card card;
-      if (v != 11) {
-        card = Card{std::to_string(v), "♠", v};
-      } else {
-        card = Card{"A", "♠", v};
-      }
+      card = create_card_helper(v);
+
       // Add the drawn card to the player's hand
       player_hand.push_back(card);
 

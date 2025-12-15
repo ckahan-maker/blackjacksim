@@ -66,3 +66,30 @@ HandVal evaluate_hand_c(const std::vector<Card>& hand) {
 
   return (HandVal{total_value, is_soft, code});
 }
+
+// Create a Card object from a blackjack value.
+//
+// This helper is used in EV calculations where only the card's value
+// matters. A dummy suit is assigned
+// since suits are irrelevant for hand evaluation.
+//
+// Parameters:
+//   v - Blackjack card value (2–11).
+//
+// Returns:
+//   A Card with the specified value and corresponding rank.
+//
+Card create_card_helper(int v) {
+  Card card;
+  card.value = v;
+  card.suit  = "♠";  // Suit is arbitrary for EV logic
+
+  if (v == 11) {
+    card.rank = "A";
+  } else {
+    card.rank = std::to_string(v);
+  }
+
+  return card;
+}
+
