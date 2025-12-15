@@ -1,6 +1,5 @@
 #include "blackjack.h"
-#include <Rcpp.h>
-using namespace Rcpp;
+#include <algorithm>
 
 // Evaluates the Expected Value (EV) of the Surrender action.
 // [[Rcpp::export]]
@@ -208,5 +207,64 @@ double eval_hit_c(std::vector<Card> dealer_hand, std::vector<Card> player_hand,
   return expected_value;
 }
 
+// Compute Expected Values (EVs) for a specified set of player actions.
+//
+// Parameters:
+//   rules_obj        - R list representing a blackjack_rules object.
+//   player_hand_df   - R data.frame with the player's current hand.
+//   dealer_hand_df   - R data.frame with the dealer's current hand.
+//   card_counts_r    - Integer vector of remaining card counts by value.
+//   actions          - Character vector of actions to evaluate
+//                      (e.g., "stand", "hit", "double", "surrender", "insure").
+//
+// [[Rcpp::export]]
+Rcpp::List get_specific_evs_rcpp(Rcpp::List rules_obj,
+                           Rcpp::DataFrame player_hand_df,
+                           Rcpp::DataFrame dealer_hand_df,
+                           Rcpp::IntegerVector card_counts_r,
+                           Rcpp::CharacterVector actions) {
+
+  // Parse blackjack rules from R into a C++ rules struct
+  BlackjackRules rules = parse_rules(rules_obj);
+  // Convert R data.frames into C++ card vectors
+  std::vector<Card> player_hand = df_to_cards(player_hand_df);
+  std::vector<Card> dealer_hand = df_to_cards(dealer_hand_df);
+  // Copy remaining card counts into a fixed-size C++ array
+  std::array<int, 12> card_counts;
+  for(int i = 0; i < 12; ++i) card_counts[i] = card_counts_r[i];
+
+  // Container for EV results keyed by action name
+  Rcpp::List ev_results;
+  HandVal player_hv = evaluate_hand_c(player_hand);
+
+  // Loop over requested actions and compute EV for each
+  for(int i = 0; i < actions.size(); ++i) {
+    std::string action = Rcpp::as<std::string>(actions[i]);
+
+    if (action == "stand") {
+      // EV if the player stands immediately
+      ev_results["stand"] = eval_stand_c(dealer_hand, player_hv.total,
+                                          card_counts, rules);
+    }
+    else if (action == "hit") {
+      // EV if the player hits and then plays optimally
+      ev_results["hit"] = eval_hit_c(dealer_hand, player_hand, card_counts, rules);
+    }
+    else if (action == "double") {
+      // EV if the player doubles down (one card then stand)
+      ev_results["double"] = eval_double_c(dealer_hand, player_hand, card_counts, rules);
+    }
+    else if (action == "surrender") {
+      // EV of surrender (fixed at -0.5 units)
+      ev_results["surrender"] = eval_surrender_c();
+    }
+    else if (action == "insure") {
+      // EV of taking insurance given remaining card composition
+      ev_results["insure"] = eval_insurance_c(card_counts_r);
+    }
+  }
+
+  return ev_results;
+}
 
 
