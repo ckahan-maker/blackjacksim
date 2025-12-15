@@ -27,6 +27,37 @@ BlackjackRules parse_rules(Rcpp::List rules) {
   return rules_c;
 }
 
+// Convert an R data frame of cards into a C++ vector of Card objects.
+//
+// Parameters:
+//   df - An R data.frame representing a hand or set of cards. Expected to contain
+//   columns: rank (character), suit (character), value (integer)
+//
+// Returns:
+//   A std::vector<Card> containing the converted cards.
+//
+std::vector<Card> df_to_cards(Rcpp::DataFrame df) {
+  // Extract columns from the DataFrame as Rcpp vectors
+  Rcpp::CharacterVector ranks = df["rank"];
+  Rcpp::CharacterVector suits = df["suit"];
+  Rcpp::IntegerVector values  = df["value"];
+
+  int n = df.nrows();
+  std::vector<Card> hand;
+  hand.reserve(n);
+
+  // Build Card objects row by row
+  for(int i = 0; i < n; ++i) {
+    Card c;
+    c.rank  = Rcpp::as<std::string>(ranks[i]);
+    c.suit  = Rcpp::as<std::string>(suits[i]);
+    c.value = values[i];
+    hand.push_back(c);
+  }
+
+  return hand;
+}
+
 // Determine whether the player may double down.
 //
 // Parameters:
